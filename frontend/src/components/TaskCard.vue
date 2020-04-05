@@ -1,9 +1,9 @@
 <template lang="">
-  <div class="task-card" draggable="true" v-on:dragstart="drag">
+  <div class="task-card" draggable="true" v-on:dragstart="drag" :task-id="this.$vnode.key">
     <p class="task-title">{{name}}</p>
     <hr>
     <p class="task-desc text-secondary">{{desc}}</p>
-    <p class="task-points text-muted">{{points}} pts</p>
+    <p class="task-points text-muted">{{points}} pts {{this.$vnode.key}}</p>
   </div>
 </template>
 
@@ -16,25 +16,24 @@ export default {
   ],
   methods: {
     drag(e){
-      e.dataTransfer.setData('text', e.target.id)
-      console.log(this.$refs)
+      e.dataTransfer.setData('text',e.target.getAttribute('task-id'))
     },
-    drop(e){
-      e.preventDefault()
-      let data = e.dataTransfer.getData('text')
-      e.target.appendChild(document.getElementById('data'))
-      console.log(data)
+    dragEnd(){
+      let dragOvers = document.querySelectorAll('.drag-over')
+      for (let i = 0; i < dragOvers.length; i++){
+        dragOvers[i].classList.remove('drag-over')
+      }
     }
   }
 }
 </script>
-
 <style lang="sass">
   .task-card
     box-shadow: 0 0 10px -6px black
     padding: 6px
     margin-top: 10px
     position: relative
+    background: white
     hr
       width: 50%
     .task-desc

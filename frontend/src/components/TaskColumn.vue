@@ -3,8 +3,8 @@
     <div class="col-wrapper">
       <h2 class="text-secondary">{{title}}</h2>
       <hr>
-      <div class="droppable" v-on:drop="drop" v-on:dragover="allowDragging">
-        <TaskCard v-for="task in tasks" :key="task.id" :name="task.name" :desc="task.description" :points="task.points" :id="task.id"/>
+      <div class="droppable" v-on:dragover="dragAllow" v-on:drop="drop" v-on:dragleave="dragLeave">
+        <TaskCard v-for="task in tasks" :key="task.id" :name="task.name" :desc="task.description" :points="task.points"/>
         <AddTaskCard />
       </div>
       <a href="#" class="add-task-link">Add Task</a>
@@ -27,15 +27,20 @@ export default {
     'tasks'
   ],
   methods: {
+    dragAllow(e){
+      if (e.target.classList.contains('droppable')){
+        e.preventDefault()
+        e.target.classList.add('drag-over')
+      }
+    },
     drop(e){
       e.preventDefault()
       let data = e.dataTransfer.getData('text')
       console.log(data)
-      e.target.appendChild(document.getElementById(data))
-      console.log(data)
+      e.target.classList.remove('drag-over')
     },
-    allowDragging(e){
-      e.preventDefault()
+    dragLeave(e){
+      e.target.classList.remove('drag-over')
     }
   }
 }
@@ -45,7 +50,7 @@ export default {
 .col-wrapper
   margin: 0
   box-shadow: 0 0 10px -5px black
-  padding: 8px
+  padding: 0
 .task-col
   margin: 0
   padding: 6px
@@ -54,4 +59,14 @@ export default {
 .add-task-link
   margin: 10px
   display: inline-block
+.droppable
+  padding: 8px
+  padding-bottom: 60px
+  *
+    transition: all .2s ease-in-out
+.drag-over
+  background: #a3bcc9
+  *
+    transform: scale(.8)
+    transition: all .2s ease-in-out
 </style>
